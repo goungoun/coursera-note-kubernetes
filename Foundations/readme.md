@@ -1,7 +1,3 @@
-### IAM & admin
-- IAM service account: Project > Editor
-> Json key file 사용 용도?
-
 ### Kubernetes
 - Open Source: vendor neutral cloud native computing foundation
 - Automation: `scaling`, `load balancing`, logging, monitoring, and other management fatures of containerized applications (plaform as service)
@@ -33,6 +29,7 @@ Persistent entities representing the state of the cluster.
 - A pod embodies the environment where the container live
 - If there is more than one container in pod, they are tightly coupled and share resources such as `IP address`, `network ports`, and `storage`
 > POD안에 컨테이너는 리소스를 공유하기 때문에 localhost 127.0.0.1 로 서로 접근할 수 있고 latency를 최소화 해야하는 어플리케이션은 같은 POD안에 넣어주면 좋다.
+[./images/containers_in_a_pod.png](./images/containers_in_a_pod.png)
 
 Related to: `Declarative configuration`
 #### Object Management example
@@ -94,8 +91,9 @@ $ kubectl get pods -selector=app=nginx
 
 ### Kubernetes Control Plane
 ~~~
-Cluster = Master + 
+Cluster = Master + Node
 ~~~
+[./images/control_plain.png](./images/control_plain.png)
 Master
 - coordinate the entire cluster
 - Kube API server
@@ -109,6 +107,7 @@ Node
 - Kube-proxy: Network connectivity among the pods in a cluster
 
 ### Zonal vs Regional cluster
+[./images/zonal_vs_regional.png](./images/zonal_vs_regional.png)
 - Zonal cluster (default): <br>
 Single GCP compute zone with three identical nodes. <br>
 All in one node pool.<br>
@@ -144,7 +143,7 @@ $ gcloud builds submit --tag gcr.io/${GOOGLE_CLOUD_PROJECT}/quickstart-image .
 > Scalibility가 보장되어야 하는 application 인데 on-prem에서 개발하지만, cluster 도 고려하고 있는 경우, 해외 유저를 위한 서비스를 개발하고 있는 경우, 배포 specification이 복잡한 경우
 - Kubernetes를 셋업해서 쓸 때와 GKE를 쓸 때와 다른 점이 있다면?
 > Kubernetes는 node를 만들어주지 않기 떄문에 클러스터 어드민이 node를 만들고 Kubernetes를 붙여줘야 하지만 GKE는 Compute Engine 인스턴스를 노드로 만들어서 등록해준다.
-- `Kubernetes controll plain`
+- `Kubernetes control plain`
 - 논쟁이 많았던 아키텍처. API server가 모든 서버의 트래픽을 직접 받는 것일까? 아니면 외부 트래픽은 Node가 직접 받고 API server는 kubectl만 트래픽을 받는 것일까?
 - Regional cluster로 설정하면 같은 resion내 다른 zone에 셋업하는 것인가? 아니면 다른 region에 셋업하는 것인가?
 - Kubernetes 설정이 궁금하다. `Declarative configuration` 이란?
@@ -153,3 +152,5 @@ $ gcloud builds submit --tag gcr.io/${GOOGLE_CLOUD_PROJECT}/quickstart-image .
 - Kube scheduler가 pod를 어디에 실행할지 어떻게 아는 것일까? 
 > It knows the state of all the nodes, and it will also obey constraints that you define on where a pod ay run based on hardware, software, and policy
 - Object description하는 부분에 pod와 deployment가 겹치는 부분이 있는 것 같은데?
+- IAM service account: Project > Editor
+> Json key file 사용 용도?
