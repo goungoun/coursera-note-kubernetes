@@ -29,7 +29,7 @@ Persistent entities representing the state of the cluster.
 - A pod embodies the environment where the container live
 - If there is more than one container in pod, they are tightly coupled and share resources such as `IP address`, `network ports`, and `storage`
 > POD안에 컨테이너는 리소스를 공유하기 때문에 localhost 127.0.0.1 로 서로 접근할 수 있고 latency를 최소화 해야하는 어플리케이션은 같은 POD안에 넣어주면 좋다.
-[./images/containers_in_a_pod.png](./images/containers_in_a_pod.png)
+![./images/containers_in_a_pod.png](./images/containers_in_a_pod.png)
 
 Related to: `Declarative configuration`
 #### Object Management example
@@ -93,7 +93,7 @@ $ kubectl get pods -selector=app=nginx
 ~~~
 Cluster = Master + Node
 ~~~
-[./images/control_plain.png](./images/control_plain.png)
+![./images/control_plain.png](./images/control_plain.png)
 Master
 - coordinate the entire cluster
 - Kube API server
@@ -107,7 +107,7 @@ Node
 - Kube-proxy: Network connectivity among the pods in a cluster
 
 ### Zonal vs Regional cluster
-[./images/zonal_vs_regional.png](./images/zonal_vs_regional.png)
+![./images/zonal_vs_regional.png](./images/zonal_vs_regional.png)
 - Zonal cluster (default): <br>
 Single GCP compute zone with three identical nodes. <br>
 All in one node pool.<br>
