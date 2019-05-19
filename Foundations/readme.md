@@ -28,10 +28,8 @@ Persistent entities representing the state of the cluster.
 - Basic building block
 - A pod embodies the environment where the container live
 - If there is more than one container in pod, they are tightly coupled and share resources such as `IP address`, `network ports`, and `storage`
-> POD안에 컨테이너는 리소스를 공유하기 때문에 localhost 127.0.0.1 로 서로 접근할 수 있고 latency를 최소화 해야하는 어플리케이션은 같은 POD안에 넣어주면 좋다. <br>
-
-![./images/containers_in_a_pod.png](./images/containers_in_a_pod.png)
-
+![./images/containers_pod_resource.png](./images/containers_pod_resource.png)
+> POD안에 컨테이너는 리소스를 공유하기 때문에 localhost 127.0.0.1 로 서로 접근할 수 있고 latency를 최소화 해야하는 어플리케이션은 같은 POD안에 넣어주면 좋다. 
 Related to: `Declarative configuration`
 #### Object Management example
 > How to contain 3 NGINX pods?
