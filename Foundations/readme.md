@@ -93,7 +93,7 @@ $ kubectl get pods -selector=app=nginx
 ~~~
 Cluster = Master + Node
 ~~~
-![./images/control_plain.png](./images/control_plain.png)
+![./images/control_plane.png](./images/control_plane.png)
 Master
 - coordinate the entire cluster
 - Kube API server
