@@ -21,7 +21,7 @@
 
 ### Kubernetes Object and Pod
 Persistent entities representing the state of the cluster.
-- `Object Spec`: Desired state described by us ex) three egix pods always kept running
+- `Object Spec`: Desired state described by us ex) three NGINX pods always kept running
 - `Object Status`: Current status described by kubernetes
 #### Pod
 > 가장 작은 쿠버네티스 오브젝트가 컨테이너라고 생각하기 쉬운데 그렇지 않고 `POD`이다
@@ -73,7 +73,7 @@ spec:
                 stack: frontend
         spec:
             containers:
-            - name: ngix
+            - name: nginx
               image: nginx:latest
     selector:
         matchLabels
@@ -87,6 +87,16 @@ $ kubectl get pods -selector=app=nginx
 #### Namespace
 - Namespaces let you implement resource quotas across your cluster.
 - Namespaces allow you to use object names that would otherwise be duplicates of one another.
+
+#### Kubernetes Controller Objects
+- Service: Static IP address that represents a service. It is a network
+- A set of back-end pods are exposed to the front-end Pod using a Kubernetes service
+![./images/service_object.png](./images/service_object.png)
+
+#### Volume
+- A directory that is accessible to all containers in a Pod
+- Requirements of the Volumn can be specified using Pod specification
+- Persistent volumns: network-based storage from outsied of Pods to provide durable storage that is not lost when a Pod or node fails.
 
 ### Kubernetes Control Plane
 ~~~
