@@ -1,6 +1,7 @@
 ## [Coursera] Architecting with Google Kubernetes Engine: Foundations
 
 ### Kubernetes
+> Kubernetes is an orchestration framework for software containers. Containers are a way to package and run code that's more efficient than virtual machines. Kubernetes provides the tools you need to run containerized applications in production and at scale.
 - Open Source: vendor neutral cloud native computing foundation
 - Automation: `scaling`, `load balancing`, logging, monitoring, and other management fatures of containerized applications (plaform as service)
 - Container management: user preferences and configuration flexibility (infrastructure as a service)
@@ -25,6 +26,7 @@
 Persistent entities representing the state of the cluster.
 - `Object Spec`: Desired state described by us ex) three NGINX pods always kept running
 - `Object Status`: Current status described by kubernetes
+
 #### Pod
 > 가장 작은 쿠버네티스 오브젝트가 컨테이너라고 생각하기 쉬운데 그렇지 않고 `POD`이다
 - Basic building block
@@ -33,6 +35,7 @@ Persistent entities representing the state of the cluster.
 ![./images/containers_pod_resource.png](./images/containers_pod_resource.png)
 > POD안에 컨테이너는 리소스를 공유하기 때문에 localhost 127.0.0.1 로 서로 접근할 수 있고 latency를 최소화 해야하는 어플리케이션은 같은 POD안에 넣어주면 좋다. 
 Related to: `Declarative configuration`
+
 #### Object Management example
 > How to contain 3 NGINX pods?
 > Controller: `nginx Pod`, `nginx Pod`, `nginx Pod`
@@ -94,6 +97,7 @@ $ kubectl get pods -selector=app=nginx
 - Service: Static IP address that represents a service. It is a network
 - A set of back-end pods are exposed to the front-end Pod using a Kubernetes service
 ![./images/service_object.png](./images/service_object.png)
+- StatefulSet: Pods that need persistent storage
 
 #### Volume
 - A directory that is accessible to all containers in a Pod
@@ -125,6 +129,7 @@ All in one node pool.<br>
 A single endpoint for the cluster<br>
 - Regional cluster: <br>
 master nodes are spread out across multiple Compute Engine zones within a region<br>
+> Regional을 선택하고 3개의 개별 zone에 배포하게되면 노드 수도 세 배가 됨에 유의
 <br>
 <br>
 
@@ -165,3 +170,4 @@ $ gcloud builds submit --tag gcr.io/${GOOGLE_CLOUD_PROJECT}/quickstart-image .
 - Object description하는 부분에 pod와 deployment가 겹치는 부분이 있는 것 같은데?
 - IAM service account: Project > Editor
 > Json key file 사용 용도?
+
