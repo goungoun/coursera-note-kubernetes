@@ -78,10 +78,10 @@ $ kubectl autoscale deployment [DEPLOYMENT_NAME] --min=5 --max=15 --cpu-percent=
 ![./images/rolling_update.png](./images/rolling_update.png)
 > rolling update에서는 max unavailable, max surge에 pod수나 percent로 기술할 수 있음
 - blue-green udpate: switch all traffic
-![./images/blue_green.png]
+![./images/blue_green.png](./images/blue_green.png)
 > label selector가 pod를 선택할 때 label을 보고 선택. 배포 과정에서 리소스를 두 배로 사용해야하는 부담이 있음
 - canary deployment: gradual test
-![./images/canary_deployment.png]
+![./images/canary_deployment.png](./images/canary_deployment.png)
 > 카나리 배포는 blue-green과 비슷하지만 resource를 shift. 일부를 배포해봐서 안정성이 검증되면 그 나머지를 배포
 
 ## Jobs
