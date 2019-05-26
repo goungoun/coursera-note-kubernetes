@@ -85,7 +85,7 @@ $ kubectl autoscale deployment [DEPLOYMENT_NAME] --min=5 --max=15 --cpu-percent=
 > 카나리 배포는 blue-green과 비슷하지만 resource를 shift. 일부를 배포해봐서 안정성이 검증되면 그 나머지를 배포
 
 ## Jobs
-- example: pi
+- example: pi<br>
 ![./images/job.png](./images/job.png)
 > Job은 Deployment처럼 kubernetes object인데 배치 job에 적합. job실행 후 종료되거나, 실패했을 때 다른 pod로 옮겨서 처리하거나, 병렬/순차적으로 처리하는 부분이 고려됨
 - non parallel
