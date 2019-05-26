@@ -1,6 +1,6 @@
-## [Coursera] Architecting with Google Kubernetes Engine: Foundations
+# [Coursera] Architecting with Google Kubernetes Engine: Foundations
 
-### Kubernetes
+## Kubernetes
 > Kubernetes is an orchestration framework for software containers. Containers are a way to package and run code that's more efficient than virtual machines. Kubernetes provides the tools you need to run containerized applications in production and at scale.
 - Open Source: vendor neutral cloud native computing foundation
 - Automation: `scaling`, `load balancing`, logging, monitoring, and other management fatures of containerized applications (plaform as service)
@@ -8,7 +8,7 @@
 - `Declarative configuration`: You describe the state, and Kubernetes will keep it there in spite of failures
 - Imperative configuration: Only for quick temporary fixes
 
-### GKE (Google Kubernetes Engine)
+## GKE (Google Kubernetes Engine)
 > Compute Engine (Iaas) - GKE (Hybrid) - App Engine (PaaS) - Cloud Functions (Serverless logic)
 - Deploy, manage, scale Kubernetes environment for containerized application on GCP
 - Fully managed
@@ -22,12 +22,12 @@
 - Integrated networking
 - GCP Console
 
-### Kubernetes Object and Pod
+## Kubernetes Object and Pod
 Persistent entities representing the state of the cluster.
 - `Object Spec`: Desired state described by us ex) three NGINX pods always kept running
 - `Object Status`: Current status described by kubernetes
 
-#### Pod
+### Pod
 > 가장 작은 쿠버네티스 오브젝트가 컨테이너라고 생각하기 쉬운데 그렇지 않고 `POD`이다
 - Basic building block
 - A pod embodies the environment where the container live
@@ -36,7 +36,7 @@ Persistent entities representing the state of the cluster.
 > POD안에 컨테이너는 리소스를 공유하기 때문에 localhost 127.0.0.1 로 서로 접근할 수 있고 latency를 최소화 해야하는 어플리케이션은 같은 POD안에 넣어주면 좋다. 
 Related to: `Declarative configuration`
 
-#### Object Management example
+### Object Management example
 > How to contain 3 NGINX pods?
 > Controller: `nginx Pod`, `nginx Pod`, `nginx Pod`
 > Controller Object types: `Deployment`, `StatefulSet`, `DaemonSet`, `Job`
@@ -89,22 +89,22 @@ $ kubectl get pods -selector=app=nginx
 ~~~
 > Tip! use version control on YAML files
 
-#### Namespace
+### Namespace
 - Namespaces let you implement resource quotas across your cluster.
 - Namespaces allow you to use object names that would otherwise be duplicates of one another.
 
-#### Kubernetes Controller Objects
+### Kubernetes Controller Objects
 - Service: Static IP address that represents a service. It is a network
 - A set of back-end pods are exposed to the front-end Pod using a Kubernetes service
 ![./images/service_object.png](./images/service_object.png)
 - StatefulSet: Pods that need persistent storage
 
-#### Volume
+### Volume
 - A directory that is accessible to all containers in a Pod
 - Requirements of the Volumn can be specified using Pod specification
 - Persistent volumns: network-based storage from outsied of Pods to provide durable storage that is not lost when a Pod or node fails.
 
-### Kubernetes Control Plane
+## Kubernetes Control Plane
 ~~~
 Cluster = Master + Nodes
 ~~~
@@ -121,7 +121,7 @@ Node
 - Kublet: Kubernetes agent on each node. When the Kube-APIserver wants to start a pod on a node, it connects to that node's Kubelet.
 - Kube-proxy: Network connectivity among the pods in a cluster
 
-### Zonal vs Regional cluster
+## Zonal vs Regional cluster
 ![./images/zonal_vs_regional.png](./images/zonal_vs_regional.png)
 - Zonal cluster (default): <br>
 Single GCP compute zone with three identical nodes. <br>

@@ -1,6 +1,6 @@
-## [Coursera] Architecting with Google Kubernetes Engine: Workloads
+# [Coursera] Architecting with Google Kubernetes Engine: Workloads
 
-### The kubectl command
+## The kubectl command
 > kubectl 커맨드가 처리되는 과정
 - `kubectl`은 command를 API call로 변경 
 - `master`의 `kube-apiserver`가 API call을 받고 `etcd`를 질의하여 요청을 처리
@@ -8,9 +8,9 @@
 ![./images/kubectl.png](./images/kubectl.png)
 - config
 ~~~bash
-> $HOME/.kube/config # target cluster name, credentials
-> kubectl config view
-> gcloud container clusters \
+$ $HOME/.kube/config # target cluster name, credentials
+$ kubectl config view
+$ gcloud container clusters \
   get-credentials [CLUSTER_NAME] \
   --zone [ZONE_NAME]
 ~~~
@@ -18,12 +18,12 @@
 - kubectl syntax
 ~~~bash
 # kubectl [command] [type] [name] [flags]
-> kubectl get pods my-test-app -o=yaml
-> kubectl describe pod [POD_NAME]
-> kubectl exec [POD_NAME] ps aux
-> kubectl exec [POD_NAME] env
-> kubectl exec -it [POD_NAME] -- [command]
-> kubectl exec -it demo -- /bin/bash
+$ kubectl get pods my-test-app -o=yaml
+$ kubectl describe pod [POD_NAME]
+$ kubectl exec [POD_NAME] ps aux
+$ kubectl exec [POD_NAME] env
+$ kubectl exec -it [POD_NAME] -- [command]
+$ kubectl exec -it demo -- /bin/bash
 ~~~
 
 command: get, describe, logs, exec ...
@@ -45,10 +45,10 @@ flags: -o=yaml, -o=wide ..
 ![./images/pod_alias_ip.png](./images/pod_alias_ip.png)
 
 ## Service
-- In ever-changing container amendments, services give pods a stable IP address and name that remains the same through updates, upgrades, scalability changes, and even pod failures
+- In ever-changing container amendments, services give pods a `stable IP address` and name that remains the same through updates, upgrades, scalability changes, and even pod failures
 > Service가 Pod 앞에 있으면서 Pod에게 IP를 부여하고 트래픽을 전달하는데 Pod는 깨진 다음에 다시 생성될 때 새로운 IP를 가지기 때문에 Service쪽에 static IP를 부여. 
->Pod를 Service와 엮는 방법은 `label selector`
-[./images/service_vip.png](./images/service_vip.png)
+>Pod를 Service와 엮는 방법으로 `label selector` 사용
+![./images/service_vip.png](./images/service_vip.png)
 - Find services: Environment Variables, Kubernetes DNS add on for service discovery, Istio
 
 ## Service Types and Load Balencers
@@ -69,12 +69,12 @@ spec:
           port: 80
           targetPort: 9376
 ~~~
-[./images/service_type.png](./images/service_type.png)
-> 더블 홉 딜레마: HTTP 로드 밸런서가 노드를 랜덤으로 선택하여 트래픽을 분산하고 노드가 kube proxy를 사용해서 Pod를 (공평하게) 선택하는 과정에서 선택한 Pod가 다른 노드에 있는 경우 트래픽을 보내고 응답을 받는 과정에서 트래픽이 낭비되는 현상. 이 현상을 방지하기 위한 옵션을 사용하거나 Container-native load balancer를 사용한다. 
+![./images/service_type.png](./images/service_type.png)
+> 더블 홉 딜레마: HTTP 로드 밸런서가 노드를 랜덤으로 선택하여 트래픽을 분산하고 노드가 kube proxy를 사용해서 Pod를 (공평하게) 선택하는 과정에서 선택한 Pod가 다른 노드에 있는 경우 트래픽을 보내고 응답을 받는 과정에서 트래픽이 낭비되는 현상. 이 현상을 방지하기 위한 옵션을 사용하거나 Container-native load balancer를 사용한다.
 
 ## Ingress resource
 - To provide external access to one or more Services
-- collection of rules that direct external inbound connections to a set of services within the cluster (kind of a service for services)
+- Collection of rules that direct external inbound connections to a set of services within the cluster (kind of a service for services)
 - The traffic doesn't match any of these host-based or path-based rules, it simply send to the default backend.
 > spec에 특정 host와 path가 어떤 service:port로 가야 하는지에 대한 rule을 기록
 ~~~bash
@@ -82,7 +82,7 @@ $ kubectl edit ingress [NAME]
 $ kubectl replace -f [FILE]
 ~~~
 
-## LAB - Creating a GKE Cluster via Cloud Shell
+## Lab - Creating a GKE Cluster via Cloud Shell
 ~~~bash
 $ export my_zone=us-central1-a
 $ export my_cluster=standard-cluster-1
