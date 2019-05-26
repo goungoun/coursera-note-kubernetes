@@ -151,7 +151,7 @@ spec:
 - double hop problem
 ![./images/double_hop_dilema.png](./images/double_hop_dilema.png)
 > 더블 홉 딜레마: HTTP 로드 밸런서가 노드를 랜덤으로 선택하여 트래픽을 분산하고 노드가 kube proxy를 사용해서 Pod를 (공평하게) 선택하는 과정에서 선택한 Pod가 다른 노드에 있는 경우 트래픽을 보내고 응답을 받는 과정에서 트래픽이 낭비되는 현상. 이 현상을 방지하기 위한 옵션을 사용하거나 Container-native load balancer를 사용한다.
-- container-native load balancer
+- container-native load balancer<br>
 ![./images/container_native_load_balancer.png](./images/container_native_load_balancer.png)
 
 ## Ingress resource
