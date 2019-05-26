@@ -25,7 +25,6 @@ $ kubectl exec [POD_NAME] env
 $ kubectl exec -it [POD_NAME] -- [command]
 $ kubectl exec -it demo -- /bin/bash
 ~~~
-
 command: get, describe, logs, exec ...
 type: pod, deployents, nodes ...
 name: object name
@@ -52,6 +51,9 @@ flags: -o=yaml, -o=wide ..
 - Find services: Environment Variables, Kubernetes DNS add on for service discovery, Istio
 
 ## Service Types and Load Balencers
+> 서비스 타입의 세 가지: cluster IP, node port, load balencer
+> (단, cluster IP는 외부에서 접근 불가한 internal IP)
+![./images/service_type.png](./images/service_type.png)
 - `cluster IP`: static IP address for `internal` communications within a cluster
 - `node port`: Enable external communication
 - `load balencer`: Exposing services outside a cluster. Inbound access from outside the cluster into the service. To eliminate `double hop`, set `externalTrafficPolicy: Local`
@@ -69,8 +71,11 @@ spec:
           port: 80
           targetPort: 9376
 ~~~
-![./images/service_type.png](./images/service_type.png)
+- double hop problem
+![./images/double_hop_dilema](./images/double_hop_dilema)
 > 더블 홉 딜레마: HTTP 로드 밸런서가 노드를 랜덤으로 선택하여 트래픽을 분산하고 노드가 kube proxy를 사용해서 Pod를 (공평하게) 선택하는 과정에서 선택한 Pod가 다른 노드에 있는 경우 트래픽을 보내고 응답을 받는 과정에서 트래픽이 낭비되는 현상. 이 현상을 방지하기 위한 옵션을 사용하거나 Container-native load balancer를 사용한다.
+- container-native load balancer
+![./images/container_native_load_balancer.png](./images/container_native_load_balancer.png)
 
 ## Ingress resource
 - To provide external access to one or more Services
@@ -81,6 +86,50 @@ spec:
 $ kubectl edit ingress [NAME]
 $ kubectl replace -f [FILE]
 ~~~
+
+## Volumes
+- Durable storage outside a Pod
+![./images/nfs_volume.png](./images/nfs_volume.png)
+- Types: Long-lived (persistent disks), Short-lived (emptyDir는 pod가 지워질 때 같이 삭제), Networked (NFS)
+- NFS volume을 pod가 생성될 때 /mnt/vol에 mount해주는 예제
+~~~yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web
+spec:
+  containers:
+  - name: web
+    image: nginx
+    volumeMounts:
+    - mountPath: /mnt/vol
+      name: nfs
+  volumes:
+  - names: nfs
+    server: 10.1.1.2
+    path: "/"
+    readOnly: false
+~~~
+> State 공유가 필요한 상용 어플리케이션을 개발하고 있다면 Pod에 volume을 붙여서 Pod 내 container끼리 state를 공유할 수 있도록 만듬
+- compute engine persistent disk
+~~~bash
+$ gcloud compute disks create --size=100GB --zone=us-central1-a demo-disk
+~~~
+~~~yaml
+volumes:
+ - name: pd-volume
+   gcePersistentDisk:
+     pdName: demo-disk
+     fsType: ext4     
+~~~
+
+## Secret and ConfigMap
+- ConfigMap: General-purpose configuration information to decouple configuration from Pods
+- Secret: Manage sensitive information such as passwords, OAuth tokens, SSH keys
+
+## Stateful Set
+
+
 
 ## Lab - Creating a GKE Cluster via Cloud Shell
 ~~~bash
@@ -153,7 +202,7 @@ $ kubectl rollout undo deployments nginx-deployment
 $ kubectl rollout history deployment nginx-deployment
 ~~~
 - service : `ClusterIP`, `NodePort`, `LoadBalencer`
-- service-nginx.yaml 
+- service-nginx.yaml
 ~~~yaml
 apiVersion: v1
 kind: Service
@@ -225,7 +274,7 @@ spec:
 ~~~
 
 ## Lab - Deploying Jobs on GKE
-> 첫번째 예제는 pi의 소수점 이하 2,000까지 출력하는 예제
+> 첫번째 예제는 pi의 소수점 이하 2,000까지 출력하는 예제 (구글이 좋아하는 예제)
 > 두번째 예제는 crontab을 거는 예제
 - `example-cronjob.yaml` 매 분마다 hello world를 출력하는 crone job
 > `schedule` 부분을 보면 1분마다
@@ -265,7 +314,7 @@ $ kubectl autoscale deployment web --max 4 --min 1 --cpu-percent 1
 > 실습이 다소 길지만 핵심은 `kubectl autoscale deployment` deployment는 미리 만들어진 hello-app을 `gcr.io/google-samples/hello-app:1.0`을 사용
 
 ## Lab - Deploying Kubernetes Engine via Helm Charts
-- Helm Chart를 다운로드 받아서 설치 
+- Helm Chart installation
 ~~~bash
 $ wget https://storage.googleapis.com/kubernetes-helm/helm-v2.6.2-linux-amd64.tar.gz
 $ tar zxfv helm-v2.6.2-linux-amd64.tar.gz -C ~/
@@ -276,7 +325,7 @@ $ kubectl create clusterrolebinding tiller-admin-binding \
    --serviceaccount=kube-system:tiller
 $ ~/helm init --service-account=tiller
 $ ~/helm repo update
-~/helm install stable/redis
+$ ~/helm install stable/redis
 ~~~
 > Error: no available release name found 오류로 중단
 
@@ -386,8 +435,164 @@ spec:
 ~~~
 
 ## Lab - Configuring Persistent Storage
+- Persistent Volume Claim(PVC)
+- pvc-demo.yaml
+~~~yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: hello-web-disk
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 30Gi
+~~~
+~~~bash
+$ git clone https://github.com/GoogleCloudPlatformTraining/training-data-analyst
+$ cd ~/training-data-analyst/courses/ak8s/12_Storage/
+$ kubectl get persistentvolumeclaim
+~~~
+> PV(Persistent Volume) 오브젝트를 만들거나 Compute Engine persistent disks를 만들 수 있짐나 PVC를 만들면 쿠버네티스가 persistent volume을 만들어줌
+- mount PVC to a Pod
+~~~yaml
+kind: Pod
+apiVersion: v1
+metadata:
+  name: pvc-demo-pod
+spec:
+  containers:
+    - name: frontend
+      image: nginx
+      volumeMounts:
+      - mountPath: "/var/www/html"
+        name: pvc-demo-volume
+  volumes:
+    - name: pvc-demo-volume
+      persistentVolumeClaim:
+        claimName: hello-web-disk
+~~~
+~~~bash
+$ kubectl apply -f pod-volume-demo.yaml
+$ kubectl exec -it pvc-demo-pod -- sh
+$ kubectl delete pod pvc-demo-pod
+$ kubectl get persistentvolumeclaim
+~~~
+> pod를 만들고 pod안에 들어가서 volume에 file을 만든 후에 pod를 delete
+> pod를 다시 만들면 volume이 지워지지 않았기 때문에 똑같은 문자열이 실행되는 것을 알 수 있다.
+- PVC를 `StatefulSet`에서 사용하는 방법 테스트
+~~~bash
+$ kubectl describe statefulset statefulset-demo
+$ kubectl get pods
+NAME                 READY   STATUS    RESTARTS   AGE
+statefulset-demo-0   1/1     Running   0          13m
+statefulset-demo-1   1/1     Running   0          12m
+statefulset-demo-2   1/1     Running   0          12m
+$ kubectl get pvc # replica 3개로 정의한 statefulset이 같은 volume을 공유하고 있음
+NAME                                STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+hello-web-disk                      Bound    pvc-36046b20-7f8d-11e9-a31a-42010a8000a4   30Gi       RWO            standard       16m
+hello-web-disk-statefulset-demo-0   Bound    pvc-a71386a7-7f8d-11e9-a31a-42010a8000a4   30Gi       RWO            standard       13m
+hello-web-disk-statefulset-demo-1   Bound    pvc-b40fb7cf-7f8d-11e9-a31a-42010a8000a4   30Gi       RWO            standard       13m
+hello-web-disk-statefulset-demo-2   Bound    pvc-c015828d-7f8d-11e9-a31a-42010a8000a4   30Gi       RWO            standard       12m
+$ kubectl describe pvc hello-web-disk-statefulset-demo-0
+~~~
+- statefulset-demo.yaml
+~~~yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: statefulset-demo
+spec:
+  selector:
+    matchLabels:
+      app: MyApp
+  serviceName: statefulset-demo-service
+  replicas: 3
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: MyApp
+    spec:
+      containers:
+      - name: stateful-set-container
+        image: nginx
+        ports:
+        - containerPort: 80
+          name: http
+        volumeMounts:
+        - name: hello-web-disk
+          mountPath: "/var/www/html"
+  volumeClaimTemplates:
+  - metadata:
+      name: hello-web-disk
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 30Gi
+~~~
+~~~bash
+$ kubectl get pods
+NAME                 READY   STATUS              RESTARTS   AGE
+statefulset-demo-0   0/1     ContainerCreating   0          1s
+statefulset-demo-1   1/1     Running             0          18m
+statefulset-demo-2   1/1     Running             0          18m
+~~~
+> 0번 pod로 들어가서 html 파일을 mount한 volumn에 쓴 뒤 pod 삭제 후 다시 get pods해보면 replica 3개를 유지하기 위해 새로 만들어지고 있고 (age로 확인) 새로 생긴 pod로 들어가서 확인해보면 아까 작성한 파일이 그대로 있음
 
-## Lab - Working with GKE Secrets 
+## Lab - Working with GKE Secrets and ConfigMaps
+- pub/sub topic 
+~~~bash
+$ export my_pubsub_topic=echo
+$ export my_pubsub_subscription=echo-read
+$ gcloud pubsub topics create $my_pubsub_topic
+$ gcloud pubsub subscriptions create $my_pubsub_subscription \
+ --topic=$my_pubsub_topic
+~~~
+- deployment
+~~~bash
+$ git clone https://github.com/GoogleCloudPlatformTraining/training-data-analyst
+$ cd ~/training-data-analyst/courses/ak8s/13_Secrets/
+$ kubectl apply -f pubsub.yaml
+~~~
+- pubsub.yaml
+~~~yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pubsub
+spec:
+  selector:
+    matchLabels:
+      app: pubsub
+  template:
+    metadata:
+      labels:
+        app: pubsub
+    spec:
+      containers:
+      - name: subscriber
+        image: gcr.io/google-samples/pubsub-sample:v1
+~~~
+> Pub/Sub에 topic을 만들고 topic으로부터 읽어가는 application을 만드는 예제. 미리 만들어진 appilcation이 gcr.io에 들어있는데 credential이 없이 배포하면 오류가 난다. 
+~~~bash
+$ kubectl apply -f pubsub.yaml
+error: unable to recognize "pubsub.yaml": Get http://localhost:8080/api?timeout=32s: dial tcp 127.0.0.1:8080: connect: connection refused
+
+$ kubectl logs -l app=pubsub
+The connection to the server localhost:8080 was refused - did you specify the right host or port?
+~~~
+- Create service account credentials
+> IAM에서 pub/sub 권한을 부여한 key를 만들어서 json file로 받은 다음 cloud shell로 파일을 올려서 secret을 생성해 준 후 json file은 삭제
+~~~bash
+$ kubectl create secret generic pubsub-key --from-file=key.json=$HOME/credentials.json
+$ rm -rf ~/credentials.json
+ ~~~
+
+
 
 
 ## Notes
