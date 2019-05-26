@@ -43,6 +43,83 @@ flags: -o=yaml, -o=wide ..
 > IP가 부족하지 않도록  클러스터 내 통용되는 IP로 4000개를 확보하고 Pod를 위한 IP range를 별개로 부여함. /14 로 부여하면 25만개 IP address인데 실제로는 하나의 클러스터에서 25만개 IP를 쓸 일이 거의 없다고 가정하여 한 노드에는 250개 정도의 IP만 사용하도록 제한하여 1000 노드를 쓸 수 있도록 함. 1000노드 100 Pod가 기본값
 ![./images/pod_alias_ip.png](./images/pod_alias_ip.png)
 
+## Deployment
+- New Pods are created or updated by your deployment
+> pod를 여러개 만들 때 하나하나 만드는 것이 아니라 deployment를 만들어서 pod가 몇개가 있어야 하는지를 적어놓으면 deployment controller가 알아서 이상적인 상태를 유지해 줌
+- Desired state of pods ex) make sure that five NGINX pods are running all times
+- well suited for stateless application
+- Deployment controller: responsible for keeping the desired state over time!
+~~~bash
+$ kubectl apply -f [DEPLOYMENT_FILE]
+$ kubectl run [DEPLOYMENT_NAME] \
+  --image [IMAGE]:[TAG] \
+  --replicas 3 \
+  --labels [KEY]=[VALUE] \
+  --port 8080
+  --generator deployment/apps.v1 \
+  --save-config
+~~~
+> deployment를 만드는 법은 3가지가 있는데 yaml 파일 or 커맨드 라인 or 콘솔 
+> 커맨드로 만들어 놓은 것을 -o yaml 옵션을 써서 파일로 받을 수도 있다.
+~~~bash
+$ kubectl get deployment [DEPLOYMENT_NAME] -o yaml > this.yaml
+~~~
+- scaling a deployment 
+~~~
+$ kubectl create deployment [DEPLOYMENT_NAME] -replicas=5
+
+# Horizontal pod auto scaler
+$ kubectl autoscale deployment [DEPLOYMENT_NAME] --min=5 --max=15 --cpu-percent=75
+~~~
+> 너무 자주 auto scaling 되는 경우를 방지하기 위해서 cooldown/delay 옵션이 지원되며 기본 값은 5분 `--horizontal-pod-autoscalaler-downscale-delay`
+
+## Deployment strategy
+- rolling update
+![./images/rolling_update.png](./images/rolling_update.png)
+> rolling update에서는 max unavailable, max surge에 pod수나 percent로 기술할 수 있음
+- blue-green udpate: switch all traffic
+![./images/blue_green.png]
+> label selector가 pod를 선택할 때 label을 보고 선택. 배포 과정에서 리소스를 두 배로 사용해야하는 부담이 있음
+- canary deployment: gradual test
+![./images/canary_deployment.png]
+> 카나리 배포는 blue-green과 비슷하지만 resource를 shift. 일부를 배포해봐서 안정성이 검증되면 그 나머지를 배포
+
+## Jobs
+- example: pi
+![./images/job.png]
+> Job은 Deployment처럼 kubernetes object인데 배치 job에 적합. job실행 후 종료되거나, 실패했을 때 다른 pod로 옮겨서 처리하거나, 병렬/순차적으로 처리하는 부분이 고려됨
+- non parallel
+- parallel ex) parallel job with fixed completion count
+~~~yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: my-app-job
+spec:
+  completions: 3
+  parallelism: 2
+  backoffLimit: 4
+  activeDeadlineSeconds: 300
+  template:
+    spec:
+[...]
+~~~
+
+## CronJobs
+~~~yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: my-app-job
+spec:
+  schedule: "*/1 * * * *"
+  concurrencyPolicy: Forbid # if existing job hasn't finished, Cron job won't excute a new job 
+  jobtemplate:
+    spec:
+      ...
+~~~
+> 크론탭 처럼 쓸 수 있는 kubernetes object인데 다른 object하고 같이 쓸 수 있어야 하는 것이 아닌가?
+
 ## Service
 - In ever-changing container amendments, services give pods a `stable IP address` and name that remains the same through updates, upgrades, scalability changes, and even pod failures
 > Service가 Pod 앞에 있으면서 Pod에게 IP를 부여하고 트래픽을 전달하는데 Pod는 깨진 다음에 다시 생성될 때 새로운 IP를 가지기 때문에 Service쪽에 static IP를 부여. 
