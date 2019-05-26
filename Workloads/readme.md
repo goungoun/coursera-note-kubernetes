@@ -86,7 +86,7 @@ $ kubectl autoscale deployment [DEPLOYMENT_NAME] --min=5 --max=15 --cpu-percent=
 
 ## Jobs
 - example: pi
-![./images/job.png]
+![./images/job.png](./images/job.png)
 > Job은 Deployment처럼 kubernetes object인데 배치 job에 적합. job실행 후 종료되거나, 실패했을 때 다른 pod로 옮겨서 처리하거나, 병렬/순차적으로 처리하는 부분이 고려됨
 - non parallel
 - parallel ex) parallel job with fixed completion count
