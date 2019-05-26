@@ -74,13 +74,13 @@ $ kubectl autoscale deployment [DEPLOYMENT_NAME] --min=5 --max=15 --cpu-percent=
 > 너무 자주 auto scaling 되는 경우를 방지하기 위해서 cooldown/delay 옵션이 지원되며 기본 값은 5분 `--horizontal-pod-autoscalaler-downscale-delay`
 
 ## Deployment strategy
-- rolling update
+- rolling update<br>
 ![./images/rolling_update.png](./images/rolling_update.png)
 > rolling update에서는 max unavailable, max surge에 pod수나 percent로 기술할 수 있음
-- blue-green udpate: switch all traffic
+- blue-green udpate: switch all traffic<br>
 ![./images/blue_green.png](./images/blue_green.png)
 > label selector가 pod를 선택할 때 label을 보고 선택. 배포 과정에서 리소스를 두 배로 사용해야하는 부담이 있음
-- canary deployment: gradual test
+- canary deployment: gradual test<br>
 ![./images/canary_deployment.png](./images/canary_deployment.png)
 > 카나리 배포는 blue-green과 비슷하지만 resource를 shift. 일부를 배포해봐서 안정성이 검증되면 그 나머지를 배포
 
