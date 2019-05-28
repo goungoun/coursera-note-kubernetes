@@ -161,7 +161,7 @@ $ gcloud builds submit --tag gcr.io/${GOOGLE_CLOUD_PROJECT}/quickstart-image .
 > Kubernetes는 node를 만들어주지 않기 떄문에 클러스터 어드민이 node를 만들고 Kubernetes를 붙여줘야 하지만 GKE는 Compute Engine 인스턴스를 노드로 만들어서 등록해준다.
 - `Kubernetes control plain`
 - 논쟁이 많았던 아키텍처. API server가 모든 서버의 트래픽을 직접 받는 것일까? 아니면 외부 트래픽은 Node가 직접 받고 API server는 kubectl만 트래픽을 받는 것일까?
-- Regional cluster로 설정하면 같은 resion내 다른 zone에 셋업하는 것인가? 아니면 다른 region에 셋업하는 것인가?
+- Regional cluster로 설정하면 같은 region서버 내 다른 zone에 셋업하는 것인가? 아니면 다른 region에 셋업하는 것인가? => 같은 region
 - Kubernetes 설정이 궁금하다. `Declarative configuration` 이란?
 - Stateful과 Stateless를 둘 다 지원하는 것에 대해 강좌에서 강조한 이유는 무엇일까?
 - Pod 안에 여러 컨테이너를 두면서 networking storage를 공유하는 케이스에 대해
@@ -169,5 +169,5 @@ $ gcloud builds submit --tag gcr.io/${GOOGLE_CLOUD_PROJECT}/quickstart-image .
 > It knows the state of all the nodes, and it will also obey constraints that you define on where a pod ay run based on hardware, software, and policy
 - Object description하는 부분에 pod와 deployment가 겹치는 부분이 있는 것 같은데?
 - IAM service account: Project > Editor
-> Json key file 사용 용도?
+- Json key file 사용 용도? => IAM에서 key file을 받아서 적용하는 부분이 다음 챕터에
 
