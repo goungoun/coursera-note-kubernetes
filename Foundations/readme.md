@@ -94,7 +94,7 @@ $ kubectl get pods -selector=app=nginx
 - Namespaces allow you to use object names that would otherwise be duplicates of one another.
 
 ### Kubernetes Controller Objects
-- Service: Static IP address that represents a service. It is a network
+- Service: `Static IP` address that represents a service. It is a network
 - A set of back-end pods are exposed to the front-end Pod using a Kubernetes service
 ![./images/service_object.png](./images/service_object.png)
 - StatefulSet: Pods that need persistent storage
@@ -118,7 +118,7 @@ Master
 > kube scheduler가 어떤 노드에 pod를 배포할지를 결정하는데 사용자가 지정한 스펙에 따른다. 예를 들면 메모리를 충분히 확보해야 하는 pod가 있을 수 있고, 같이 배포해야하는 것들, 같이 배포하면 안 되는 것들은 specificatin에 정의해준다.
 - kube controller-manager: It monitors the states of a cluster through kube-APIserver. It make changes to achieve the desired state.
 Node
-- Kublet: Kubernetes agent on each node. When the Kube-APIserver wants to start a pod on a node, it connects to that node's Kubelet.
+- `Kublet`: Kubernetes `agent` on each node. When the Kube-API server wants to start a pod on a node, it connects to that node's Kubelet.
 - Kube-proxy: Network connectivity among the pods in a cluster
 
 ## Zonal vs Regional cluster
