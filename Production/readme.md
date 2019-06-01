@@ -11,14 +11,15 @@ $ kubectl logs --since=3h [POD_NAME] # most recent 3 hours
 - As these log files grow, the node this can easily become saturated. 
 - GKE streams these logs to Stackdriver by default, and then regularly runs the Linux `log rotate utility` to clean up these files. 
 > kubectl 커맨드로 최신의 로그를 확인할 수는 있지만 용량 때문에 stack driver에 스트림으로 밀어넣고 파일을 삭제하여 서버 용량을 확보하려 함<br>
-> stack driver의 경우 월 50기가 까지 무료이고 default setting은 30 days
+> stack driver의 경우 월 50기가 까지 무료이고 default setting은 30 days <br>
 > You may be wondering whether for a real-world application those messages are useful. It's an increasingly common practice for applications to simply write log messages to standard output with no buffering or filtering.
 
 ## Monitoring
-- SRE: Google's approach to DevOps and it's a fundamental part of how Google runs its services reliably and at massive scale.
+- SRE: DevOps fundamental part of how Google runs its services reliably at massive scale
 - Service Hierarchy: Monitoring -> Incident Response -> Postmoterm/Root Cause Analysis -> Testing and Release Procedures -> Capacity Planning -> Development -> Product
-- Monitoring is the most fundamental layer of the service reliability hierarchy.
-> 피라미드로 위에 있는 액티비티들은 하위 액티비티와 의존하고 있다고 보면 됨. Product는 개발에 의존하고 있고 개발은 용량 산정 계획에 의존. 모니터링이 Service Reliability를 실현하는데 가장 기초적인 부분
+- Monitoring is the most fundamental layer of the service reliability hierarchy
+> 피라미드로 위에 있는 액티비티들은 하위 액티비티와 의존하고 있다고 보면 됨 <br>
+> Product는 개발에 의존하고 있고 개발은 용량 산정 계획에 의존. 모니터링이 Service Reliability를 실현하는데 가장 기초
 - number of nodes
 - node utilization
 - Pods/deployment running
@@ -90,8 +91,8 @@ spec:
 - The effective IAM permissions on any member are the `union` of the permissions granted at all levels of the resource hierarchy.
 > Organization > Project > Resources
 - Grant very `few` permissions at `higher levels`, and additional permissions must be granted to only those who need them. 
-> 주의! 상위 레벨이서 부여한 권한을 하위 레벨에서 뺄 수는 없음
-> It is possible to grant an IAM permission at a higher point in the GCP resource hierarchy and revoke it at a lower point. (false)
+> 주의! 상위 레벨이서 부여한 권한을 하위 레벨에서 뺄 수는 없음 <br>
+> It is not possible to grant an IAM permission at a higher point in the GCP resource hierarchy and revoke it at a lower point.
 ![./images/iam_policy.png](./images/iam_policy.png)
 
 ## Kubernetes RBAC (Role Based Access Control)
