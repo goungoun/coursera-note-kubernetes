@@ -38,8 +38,8 @@ Related to: `Declarative configuration`
 
 ### Object Management example
 > How to contain 3 NGINX pods?
-> Controller: `nginx Pod`, `nginx Pod`, `nginx Pod`
-> Controller Object types: `Deployment`, `StatefulSet`, `DaemonSet`, `Job`
+> Controller: `nginx Pod`, `nginx Pod`, `nginx Pod` <br>
+> Controller Object types: `Deployment`, `StatefulSet`, `DaemonSet`, `Job` <br>
 - Object definition (Pod)
 ~~~yaml
 apiVersion: app/v1
