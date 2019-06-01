@@ -96,9 +96,11 @@ spec:
 ![./images/iam_policy.png](./images/iam_policy.png)
 
 ## Kubernetes RBAC (Role Based Access Control)
+- Kubernetes native security fature to controls over Kubernetes resources within the cluster
+> IAM이 있는데 RBAC을 또 쓰는 이유? 쿠버네티스 리소스에 대한 보안 설정
 - Role/Cluster Role
 ![./images/rbac_summary.png](./images/rbac_summary.png)
-- example 1: Basic role
+- example 1: Basic role 
 ~~~yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -131,8 +133,19 @@ rules:
 - verbs: ["get","post"]
 ~~~
 > 이전 버전에서는 ABAC(Attribute base access control)을 사용하였으나 이제는 지원하지 않음. RBAC가 더 사용하기 편하다고 함
-> IAM이 있는데 RBAC을 또 쓰는 이유?
 
+## Kubernetes control plane security
+- Every cluster has its own `CA(Certificate Authority)`
+- Secure communications between the master and nodes at a cluster, relies on `the shared root of trust` provided by the certificates issued by the CA.
+> 각 클러스터마다 내부적으로 `root of trust`로 CA를 ETCD 데이터베이스에 저장하고 관리 
+- When a new node of a Kubernetes cluster is created, the node is injected with a shared secret as part of its creation
+- Kubernetes API server and kublent이 통신할 때 `TLS`와 `SSH`를 사용하여 통신
+- Key rotate
+> Tip! 보안을 강화하기 위해서 key를 주기적으로 rotate 해 주어야 하는데 자주 해 주면 좋겠지만 key를 rotate하는 동안에는 API 서버에 접속이 안 될 수 있는 trade off가 있음
+-
+~~~bash
+gcloud container clusters update [NAME] --start-credential-rotation
+~~~
 ## Lab: Securing GKE with Cloud IAM and Pod Security Policies
 > Task 1. 계정 2개를 사용. 두번째 계정으로 쿠버네티스 클러스터를 만들 때 발생하는 권한 오류를 해결하기 위해 첫번 째 계정으로 로그인하여 IAM & Admin에서 권한을 줌
 - `create a cluster` is disabled 
@@ -193,3 +206,6 @@ $ kubectl apply -f ./my-pod.yaml --namespace=production
 
 - kubectl apply -f pod-reader-role.yaml
 - kubectl get roles --namespace production
+
+
+
